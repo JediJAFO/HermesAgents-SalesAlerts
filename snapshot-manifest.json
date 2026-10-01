@@ -1,8 +1,8 @@
 {
   "kind": "sales",
   "files": {
-    "McFarlane_DC_Sales_Alerts_PRD.docx": "fcf7e50a390695af534c26439ccba326125957d5d4c90136ae36fce9679b27b9",
-    "McFarlane_DC_Sales_Alerts_PRD.md": "921b189ce29e4b0f973258cafe68fb1f5b14d0dbabfde4924d28d744d8565daa",
+    "McFarlane_DC_Sales_Alerts_PRD.docx": "eaddde52162198603ede46e327259df8ded46fda0caf9b20db37d319b87e1956",
+    "McFarlane_DC_Sales_Alerts_PRD.md": "542f8c71c0bf82deed41c393bf3ebc15b4be10c89400455903401fecc75e90c2",
     "RESTORE.md": "f19b53f668c55930d9cbc6af34ad6358c96d1b5d811b08c654cfebe5840f2ecb",
     "price-watches/run_mcfarlane_dc_sales.py": "051fb6f900aa18124a5dc4db45e79e6034f07be71e269862332a448cb1e7bbb4",
     "restore-config.json": "d5d99ea418430ba7f308e85ee64d11762c82c60fbba852feb7690d0a2a4a918e",
@@ -10,7 +10,7 @@
     "scripts/backup-mtd-sales-alerts.py": "f59bd78027132c1c4272d063bfa90de7860b3bbb71099310e94c95cdf2569254",
     "scripts/enrich_mtd_dc_metadata.py": "e78d17ecba68feaed4795931893f5658497cd104422a87a3c475cca28b00fc3d",
     "scripts/monitor_backup.py": "556dd06054ffd7f94620659df840977fa3d08be096e075b47291b508c6de2f52",
-    "scripts/monitor_backup_manifest.json": "25132181ff5ebc8dd50e0e04bdefcaaa0bb0bb535777b3cbe6a784fb63d7552e",
+    "scripts/monitor_backup_manifest.json": "00e3089c55984b6e9a0e92e3c113e1d2f76d917c646ef3a86b50c60070b72603",
     "scripts/refresh-mcfarlane-prds.py": "83f4d148cee166a04d6878443dda6e746047f451e4eed7dcf7afd210cf5b7f10",
     "scripts/report_mtd_wallet_alias_audit.py": "ec77fcf00eb8dcd05ee5ffed175232c58e373b01766fa5290ada0c061537fb04",
     "scripts/retry_mtd_http400.py": "19626298de4f8348842e877daa1898f4dea22486ec4a1f118a77a040605f4575",
@@ -18,7 +18,7 @@
     "scripts/send_mtd_8am_last_five_heartbeat.py": "dba1a83048e71ad273e3b95f44422aa7405f1b3cabb5dc6e22a6f202497c26f1",
     "scripts/send_mtd_whatsapp_sales_only.py": "de0a2b3facaef654736799d57df4c7787d85ee337fcef08b05b7582fbe5cbc37",
     "scripts/test_audit_mtd_wallet_aliases.py": "6fb9d7ead1b30ece35305246b2e38c25817162910b2c4a76e1421a91ee008628",
-    "scripts/test_monitor_backup.py": "7004f57a1cb64d34f6c73b0634ee20fe54b78fc5af5ffd8cfadbbb656984d4ac",
+    "scripts/test_monitor_backup.py": "4af43bca02e24305468fd7b40d7206a8f4a14630a2a8c447f1740fb40a0861c3",
     "scripts/test_report_mtd_wallet_alias_audit.py": "c75513a63419ac97afb380bc49d7d100f94236b3929307d824dbdca28d267bbc"
   }
 }
