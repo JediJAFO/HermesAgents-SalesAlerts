@@ -1,6 +1,7 @@
 import os, json, sys, tempfile, urllib.request, urllib.error
 from datetime import datetime, timezone, timedelta
 from decimal import Decimal
+from mcfarlane_wallet_aliases import alias_for_wallet
 
 ROOT='__HERMES_HOME__/price-watches'
 STATE=ROOT+'/mcfarlane-dc-sales.json'; ALIASES=ROOT+'/mcfarlane-wallet-aliases.json'; RATES=ROOT+'/mcfarlane-pol-usd-daily.json'
@@ -52,12 +53,7 @@ def wallet(s):
     x=s.split(':',1)[-1].lower()
     return x if x.startswith('0x') and len(x)==42 else None
 def tag(w,aliases):
-    if not w:return None
-    exact=aliases.get('exact_aliases',{})
-    for k,v in exact.items():
-        if w.lower()==k.lower(): return v
-    matches=[x.get('name_tag') for x in aliases.get('masked_aliases',[]) if w.lower().startswith(x.get('prefix','').lower()) and w.lower().endswith(x.get('suffix','').lower())]
-    return matches[0] if len(matches)==1 else None
+    return alias_for_wallet(w,aliases)
 def party(w,t): return t if t else ('...'+w[-9:] if w else 'Unknown')
 def attrs(meta):
     # Rarible item meta attributes commonly sit under meta.attributes

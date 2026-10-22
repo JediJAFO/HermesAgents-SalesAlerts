@@ -67,7 +67,7 @@
         "kind": "cron",
         "expr": "15 0,8,12,16,20 * * *"
       },
-      "configured_enabled": true,
+      "configured_enabled": false,
       "enabled": false,
       "no_agent": true,
       "timezone": "America/New_York",

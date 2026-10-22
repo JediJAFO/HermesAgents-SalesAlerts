@@ -1,69 +1,91 @@
-# Product Requirements Document — MTD Completed-Sale Alerts (all approved categories)
+# Product Requirements Document — MTD Completed-Sale Alerts
 
-**Version:** 2.0
-**Agent source audit:** 2026-09-16; local code and recurring configuration only, no human approval, API or outbound test implied.
-**Status:** Active; known coverage/delivery limitations below.
-**Compatibility filename:** McFarlane_DC_Sales_Alerts_PRD. The DC filename no longer describes the entire scope.
-**Private state:** HERMES_HOME/price-watches/mcfarlane-dc-sales.json (not backed up).
+**Compatibility filename:** `McFarlane_DC_Sales_Alerts_PRD.md`  
+**Review date:** 2026-10-22  
+**Status:** Active all-category monitor; the filename is legacy.  
+**Verification boundary:** Reviewed current local source, private-state aggregates, `jobs.json`, and execution records. No marketplace/API request, notification, DOCX generation, or backup push was performed.
 
-## Purpose, scope and schedule
+## 1. Purpose and current scope
 
-Detect newly completed marketplace sales within the approved private allowlist, independently of the smaller Exotic listings watch. Current saved scope is 121 collections: DC 70, Spawn 20, UFC 12, Universal 7, McFarlane Dragons 7, Walking Dead 2, McFarlane Digital 2 and BRZRKR 1. These counts describe inspected configuration, not independently validated live market coverage.
+Detect newly completed marketplace sales for the approved private McFarlane Toys Digital allowlist. Current state contains **128 collections** across eight categories: **DC 75, Spawn 22, UFC 12, Universal 7, McFarlane Dragons 7, Walking Dead 2, McFarlane Digital 2, and BRZRKR 1**. Counts were computed from current state; exact contracts and onboarding baselines remain private.
 
-- Primary no-agent job invokes scripts/run_mtd_sales_monitor.py, which executes price-watches/run_mcfarlane_dc_sales.py. The similarly named legacy run_mcfarlane_dc_monitor.py is not the primary runtime.
-- Primary checks: 00:00, 08:00, 12:00, 16:00 and 20:00 America/New_York.
-- Saved-state-only WhatsApp stage runs at minute 15 of those hours. HTTP-400 retry and one-collection metadata enrichment poll every five minutes.
-- A separate saved-state last-five heartbeat runs at 08:05, gated on last_successful_check_at being today in hour 08. It does not validate an actual primary execution-ledger occurrence or maintain owed/replay state. If the check completes after the scheduled heartbeat, a later automatic catch-up is not implemented by this script.
-- One-off samples/reviews are not recurring requirements and are excluded from restore schedules.
+This monitor is independent of the rarity-listing watches. It consumes completed activity, not active listings, and does not purchase or bid.
 
-## Actual collection implementation
+## 2. Collection implementation
 
-The primary calls Rarible POST /v0.1/activities/search with POLYGON, SELL, the exact collection-ID strings, LATEST ordering, size 1000 and a baseline-date from field. Credentials come only from RARIBLE_API_KEY; browser-like User-Agent and Accept headers are sent. Missing credentials, HTTP failures or an absent activities array retain saved data and return silent output.
+The primary wrapper runs the current completed-sales collector. It submits one Rarible Activities search for Polygon `SELL` activity, newest first, with page size **1,000**, the exact allowlist, and a saved baseline date.
 
-Returned records are accepted only when type is exactly SELL, not reverted, in the allowlist and not already known by activity ID. Category and per-collection onboarding dates suppress older history. Query-local records are also deduplicated. Recent history is bounded to 10 records in the inspected source; the oldest-first new batch updates collection last_sale and the pending WhatsApp batch.
+A record is accepted only when it is a non-reverted `SELL`, belongs to the allowlist, is newer than applicable collection/category onboarding baselines, and is not already in the saved activity-ID ledger. The implementation does not independently accept a top-level `ACCEPT_BID` activity unless the provider exposes the completion as `SELL`.
 
-Item metadata supplies item name and the exact Rarity attribute; failures degrade to Unknown rather than aborting a valid sale. Missing collection display names get a best-effort priority lookup, falling back to the collection identifier. Buyer and seller wallets remain private; local unique aliases from the canonical `mcfarlane-wallet-aliases.json` database shared with Exotic and tracked-wallet monitors are preferred for display, otherwise only a nine-character wallet suffix is shown. The saved-state-only recurring-wallet audit reports distinct repeated wallets still unresolved by that database without making marketplace or notification calls. Metadata lookups use 10-second sleeps in the current primary, not a universal 15-second marketplace pacing guarantee.
+For each new sale the collector attempts collection and item metadata enrichment, including item name and exact `Rarity` attribute. Metadata failure degrades display fields rather than invalidating an otherwise accepted sale. Buyer and seller labels use the canonical private alias database where possible and otherwise show masked suffixes.
 
-## Known correctness limits — do not describe as complete coverage
+Historical USD uses provider sale-time USD fields first, then a previously cached date-keyed POL/USD rate. Missing historical valuation remains unavailable; old sales must not be repriced using current spot.
 
-- The actual primary performs ONE activity page request. It does not follow a continuation cursor or prove page exhaustion. More than 1000 matching events can be missed; the saved cursor field is not evidence of pagination.
-- The primary accepts only top-level SELL. Accepted bids are covered only if the provider represents completion as SELL; independent ACCEPT_BID record coverage is not implemented here.
-- The code does not advance baseline.newest_sale after the batch. It relies on initial/category baselines and the recent 10-event ID window; older events outside that window can be reconsidered when returned. A robust persisted pagination/watermark/overlap contract remains required.
-- Every rendered primary sale line labels price POL without validating the payment asset. Non-POL sales can be mislabeled. Quantity is saved but omitted in the current outbound line. Time is a truncated API date string, without an explicit timezone label.
-- Metadata failure does not invalidate the sale; therefore the previous PRD claim that any metadata failure retains the entire baseline was inaccurate. Collection fallback can expose a contract ID instead of a friendly pending-name label.
-- Sales primary, retry, metadata and downstream writers use atomic replacement but do not share the Exotic execution lease. Overlapping read-modify-write operations can lose updates.
-- A new batch overwrites pending_whatsapp_sale_alert rather than merging all undelivered events. Delivery consumption is not an acknowledged outbox transaction; failed scheduler delivery can lose replay and overlapping batches can overwrite pending events.
+## 3. Authoritative schedules
 
-## Retry and enrichment
+Schedules were read from current `jobs.json`. Relevant jobs have no explicit timezone field; intended local interpretation is America/New_York.
 
-On an HTTP 400 the primary creates a five-minute due marker with three attempts. The gated retry runner is silent when no marker is due and passes MTD_HTTP400_RETRY=1; each failed retry decrements the budget. A valid parsed activities response clears the marker. Exhaustion removes it, so no automatic retry is due until a later primary failure creates a new budget. This differs from Exotic's retained generation-scoped exhausted marker. Other errors do not create this HTTP-400 budget.
+| Function | Current schedule / state |
+| --- | --- |
+| Primary completed-sales collection | 00:00, 08:00, 12:00, 16:00, 20:00 daily |
+| Saved last-20 heartbeat | 08:05 daily |
+| HTTP-400 retry poll | Every 5 minutes |
+| Collection metadata enrichment | Every 5 minutes |
+| WhatsApp sales consumer | Configured for minute 15 after primary hours but **disabled** |
+| Daily source backup attempt | 23:50 |
 
-The metadata worker handles one pending eligible collection per tick, prioritizing collections referenced by sale records/queues before catalog-only work. A failure cools that collection down; no pending work means no request. It writes state and a readable metadata progress report. Private category onboarding baselines must be restored or rebuilt silently before enabling alerts for a category.
+The 08:05 heartbeat is saved-state-only and emits only when `last_successful_check_at` is from the current date’s 08:00 hour. It has no durable owed-heartbeat/catch-up mechanism.
 
-## USD valuation and privacy
+## 4. Output contract
 
-The primary persists API priceUsd, falling back to amountUsd, then an already-cached date-keyed POL/USD rate. It does not fetch missing historical rates itself. The older cache_mcfarlane_sale_usd.py is an unscheduled one-off migration containing embedded historic event mappings and touching both monitors, not a general rate fetcher or runtime dependency; it is deliberately excluded from source-only backups. A missing rate produces USD unavailable. Historical sale USD must not be repriced from current spot.
+- A successful no-sale primary prints an explicit update-complete status.
+- New sales are aggregated with category, collection, item, rarity, amount, captured USD when available, masked parties, and truncated sale time.
+- The current renderer labels the amount as POL without independently validating the payment asset. Quantity is retained but omitted from the alert line.
+- The heartbeat renders the **20** newest saved recap rows, not a live “last 20” query.
+- The disabled WhatsApp script reads pending saved state only; it makes no marketplace request.
 
-Raw wallets, aliases, Name Tags, delivery destinations, API credentials and raw activity payloads are private. Backup policy is now source-only rather than recursive field removal from raw state: arbitrary provider payloads can hide identities in unexpected nested fields, so denylist scrubbing is not sufficient.
+## 5. Retention and correctness limits
 
-## Notifications
+Current bounded retention is:
 
-- Successful primary no-sale result prints a short Discord status (the installed string still says MTD DC Sales Alert despite expanded scope). Failed checks are silent rather than successful heartbeats.
-- New sales are aggregated into one message with one CRLF-separated line per sale, category, collection, item, rarity, price/USD, masked buyer/seller and sale time. The current omissions/mislabeling risks are listed above, not represented as fulfilled requirements.
-- WhatsApp reads pending state only, adds the MTD Sales Alert heading and remains silent without undelivered activity. It makes no marketplace request.
-- The independent 08:05 saved last-five heartbeat is not a new-sale alert. It renders at most five recent saved sales and may show older history; it is not a live last-five query.
+- `recent_sales`: newest **20** normalized sales.
+- `seen_activity_ids`: newest **2,000** IDs.
+- One pending WhatsApp batch object, overwritten by a later new batch.
 
-## Source-only backup and restore
+The API request is a single page and does not follow the returned cursor. Therefore the monitor does not prove exhaustive coverage when more than 1,000 qualifying records fall in the queried range. The saved cursor field is observational only. The baseline watermark is not advanced to the newest processed sale; dedupe relies on onboarding baselines plus the bounded ID ledger.
 
-The explicit manifest now includes the actual primary Python wrapper and collector, HTTP-400 retry, WhatsApp downstream, 08:05 heartbeat, metadata worker, shared backup/PRD automation and offline tests. RESTORE.md and restore-config.json supply dependency requirements, relocation placeholders and disabled recurring schedules. They intentionally exclude exact roster/contracts, baseline/history, raw activity state, wallet aliases, delivery IDs, credentials, private URLs, logs, environments and browser profiles.
+Primary, retry, metadata, heartbeat, and downstream writers use atomic file replacement but do not share one end-to-end transaction. Overlapping read-modify-write operations can lose updates. The pending WhatsApp object is not an acknowledged multi-batch outbox and can be overwritten before successful delivery.
 
-Restore requires Python 3.11+, the declared packages, Hermes and separately supplied private state or an explicitly approved silent rebaseline. Alias and daily-rate JSON files must exist (empty structures are acceptable for degraded display). Preserve private dedupe/pending state only through a separate trusted recovery process; do not replay history as new sales. No scheduled live test was performed for this review.
+## 6. Failure behavior
 
-Daily backup detects identical source snapshots, enforces one ET-day success/push-attempt cap before staging, refuses dirty or legacy-data-bearing repositories, stages only explicit files, and verifies a successful push against the remote commit. Existing git history is not sanitized by creating a new source snapshot. PRD automation records drift using all manifest sources and stable relevant schedule/scope semantics plus allowlisted policy declarations; changed hashes are not a substantive review and declarations may lag implementation. DOCX follows Markdown content, not volatile scheduler telemetry. Snapshot verification rejects unlisted files and scans DOCX text, metadata and external relationships.
+- Missing credentials, HTTP errors, malformed activity responses, or other request failures retain prior data and suppress a success message.
+- HTTP 400 creates up to **three** delayed retry attempts, each scheduled five minutes after failure. Other failure classes have no dedicated retry budget.
+- Metadata failures do not roll back accepted sales.
+- The heartbeat silently skips when the 08:00 freshness gate is not met; there is no later automatic replay.
+- Scheduler completion is not proof that stdout reached Discord or that the marketplace page was exhaustive.
 
-The enabled daily backup remains at 23:50 America/New_York. The inspected repository still contains tracked legacy monitor data and an untracked metadata script. The source-only backup intentionally refuses this repository until the owner reviews/quarantines legacy files and cleans the worktree. No automatic cleanup, history rewrite or remote push was performed by this offline audit.
+## 7. Privacy and backup
+
+Private data includes contracts, onboarding baselines, wallets, aliases, raw activity payloads, credentials, destination IDs, pending delivery content, and logs. Public/source snapshots must contain only reviewed source and documentation, never live JSON state.
+
+The sales source-only manifest includes the primary collector, retry, metadata worker, heartbeat, disabled WhatsApp consumer, and shared backup utilities. It does not restore private state, so source restoration requires a separately secured state recovery or an explicitly approved silent rebaseline.
+
+The currently enabled daily backup is not healthy. The open scheduler incident shows the PRD refresh failing because the scheduled Python environment lacks the DOCX library. No backup push was attempted in this review. Existing repository history and old data-bearing files remain outside the guarantees of a clean source snapshot.
+
+## 8. Verification and remaining requirements
+
+Programmatic review verified the **128**-collection category totals, the five daily primary occurrences, heartbeat/retry/enrichment schedules, the disabled WhatsApp state, and current retention constants. It did not verify provider schema, current activity completeness, payment-asset correctness, delivery receipt, or remote backup state.
+
+Required engineering work before claiming resilient coverage:
+
+1. Implement cursor pagination with a durable watermark and bounded overlap.
+2. Validate and display payment asset and quantity.
+3. Replace the single pending WhatsApp object with an acknowledged outbox if that route is re-enabled.
+4. Coordinate state writers under a shared transaction/lease.
+5. Add durable heartbeat debt/catch-up.
+6. Repair the scheduled backup environment and verify a remote commit separately.
 
 <!-- automated-drift:start -->
-**Observed implementation fingerprint:** `fd48ced8d4eb444e37efbf5812585bb0fb9820c75ad8bcc78f4156103f1bed93`
+**Observed implementation fingerprint:** `93e30e043647da782033512ba4d6cfb16e03f767ae09024c0edcfcefda715abe`
 **Automated drift status:** changed or unreviewed; substantive review required. Hash comparison is not a requirements review.
 <!-- automated-drift:end -->

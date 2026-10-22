@@ -13,6 +13,8 @@ from zoneinfo import ZoneInfo
 STATE = Path(r"__HERMES_HOME__/price-watches/mcfarlane-dc-sales.json")
 ALIASES = STATE.with_name("mcfarlane-wallet-aliases.json")
 EASTERN = ZoneInfo("America/New_York")
+sys.path.insert(0, str(STATE.parent))
+from mcfarlane_wallet_aliases import alias_for_wallet
 
 
 def parsed(value):
@@ -31,7 +33,7 @@ def usd_text(value):
 
 def buyer_text(sale, aliases):
     wallet = str(sale.get("buyer_wallet") or sale.get("buyer") or "").split(":")[-1].lower()
-    current = {str(k).lower(): v for k, v in aliases.get("exact_aliases", {}).items()}.get(wallet)
+    current = alias_for_wallet(wallet, aliases)
     if current:
         return str(current)
     if sale.get("buyer_name_tag"):
@@ -39,7 +41,7 @@ def buyer_text(sale, aliases):
     if sale.get("buyer_display"):
         return str(sale["buyer_display"])
     if wallet:
-        return "..." + wallet[-4:]
+        return "..." + wallet[-9:]
     return "Buyer not recorded"
 
 
