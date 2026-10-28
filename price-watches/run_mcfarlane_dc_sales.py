@@ -73,7 +73,7 @@ def main():
     except Exception as e: return fail(state,str(e))
     acts=result.get('activities')
     if not isinstance(acts,list): return fail(state,'Rarible malformed response (activities missing)')
-    # Alert dedupe must outlive the bounded display recap; the latter keeps only twenty rows.
+    # Alert dedupe must outlive the bounded display recap; the latter keeps only thirty rows.
     seen=state.get('seen_activity_ids')
     if not isinstance(seen,list):
         seen=[x.get('activity_id',x.get('id')) for x in state.get('recent_sales',[]) if x.get('activity_id',x.get('id'))]
@@ -143,7 +143,7 @@ def main():
         out.append(f"• **[{category}] {c.get('display_name') or col}** — Item: **{item_name}**; Rarity: **{rarity}**; Price: **{amount} POL ({usd_text})**; Buy: **{party(bw,bt)}**; Sell: **{party(sw,st)}**; Sold: {sold}")
         c['last_sale']=a; normalized.append(a)
     # Keep a bounded, chronological recap history for the daily heartbeat.
-    state['recent_sales']=sorted(state.get('recent_sales',[])+normalized,key=lambda a:a.get('date',''),reverse=True)[:20]
+    state['recent_sales']=sorted(state.get('recent_sales',[])+normalized,key=lambda a:a.get('date',''),reverse=True)[:30]
     state['seen_activity_ids']=list(dict.fromkeys(seen+[a['activity_id'] for a in normalized]))[-2000:]
     newest=max(fresh,key=lambda x:x.get('date','')); state['last_activity_search_cursor']=newest.get('cursor',state.get('last_activity_search_cursor')); state['last_successful_check_at']=now(); state['last_activity_search_status']='verified: HTTP 200 parsed; '+str(len(normalized))+' qualifying new sales'; state['last_activity_search_attempt_at']=state['last_successful_check_at']; state.pop('last_activity_search_failed_at',None); state.pop('http400_retry',None)
     state['pending_whatsapp_sale_alert']={'activity_ids':[a['activity_id'] for a in normalized],'alert_text':'\r\n'.join(out),'delivered':False,'created_at':now()}

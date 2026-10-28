@@ -1,11 +1,11 @@
 {
   "kind": "sales",
   "files": {
-    "McFarlane_DC_Sales_Alerts_PRD.docx": "86eb11e0d1c88b5f43aa6d2524819f4a1a456793f0fc351325f0bb4b5f227a27",
-    "McFarlane_DC_Sales_Alerts_PRD.md": "f03eeb56a89d8cb28808e388e951c0d81a822cff9f5f0204a95e12a2cbfd2e18",
+    "McFarlane_DC_Sales_Alerts_PRD.docx": "5c7ad2ea85dea5f7de02413876ada2dd2176ad0a2748b87e339ce0b3699fdf91",
+    "McFarlane_DC_Sales_Alerts_PRD.md": "c1557f446d639d5c253825aa008495682102534934f25cc05e6daf6272c5f944",
     "RESTORE.md": "ef8726768470b1038a5d1e464377f59b29c258f0ee7b27f003d93d2a31cb90d1",
     "price-watches/mcfarlane_wallet_aliases.py": "61e4c22bb18eb2d94272a5ae5d6a07d9e639be326b5c45714465b991d3273062",
-    "price-watches/run_mcfarlane_dc_sales.py": "d9595c4eb6e0576e3d61954bef1ddd23c7346957bf8affbe5294f7a9a753b359",
+    "price-watches/run_mcfarlane_dc_sales.py": "8af5dd68d9970248fa1b67e1d7d73cbbfafd179187f4f0037310b17e5de75ec4",
     "restore-config.json": "ef26d9bed1c0c66437adf4515b208f5a918489203c15aa90d3a6437f14e7ebfe",
     "scripts/audit_mtd_wallet_aliases.py": "928ccfe09967886196c115e0357e849853210dfde6cc06f44c160265426e6971",
     "scripts/backup-mtd-sales-alerts.py": "f59bd78027132c1c4272d063bfa90de7860b3bbb71099310e94c95cdf2569254",
@@ -16,7 +16,7 @@
     "scripts/report_mtd_wallet_alias_audit.py": "ec77fcf00eb8dcd05ee5ffed175232c58e373b01766fa5290ada0c061537fb04",
     "scripts/retry_mtd_http400.py": "19626298de4f8348842e877daa1898f4dea22486ec4a1f118a77a040605f4575",
     "scripts/run_mtd_sales_monitor.py": "90034e93904481b3e8aac91fb5e910b15507de92f42208411a1b1bd96f42052b",
-    "scripts/send_mtd_8am_last_five_heartbeat.py": "0303459c2ef6cd2ee4ec357640fe778a1465cd4aa8ae8dafbb120d79512a9635",
+    "scripts/send_mtd_8am_last_five_heartbeat.py": "7b3621d24cff93df93fa0eaed69972bb2910f2708483a3fd4108a24f7c4c6e9d",
     "scripts/send_mtd_whatsapp_sales_only.py": "de0a2b3facaef654736799d57df4c7787d85ee337fcef08b05b7582fbe5cbc37",
     "scripts/test_audit_mtd_wallet_aliases.py": "711713b4b7cd585fbf2571f114f90caaa4ee881e8b8a399511e135bb3af57fd8",
     "scripts/test_monitor_backup.py": "4af43bca02e24305468fd7b40d7206a8f4a14630a2a8c447f1740fb40a0861c3",
