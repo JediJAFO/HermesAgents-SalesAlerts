@@ -19,7 +19,7 @@
         "kind": "cron",
         "expr": "*/5 * * * *"
       },
-      "configured_enabled": true,
+      "configured_enabled": false,
       "enabled": false,
       "no_agent": true,
       "timezone": "America/New_York",
@@ -31,7 +31,7 @@
         "kind": "cron",
         "expr": "*/5 * * * *"
       },
-      "configured_enabled": true,
+      "configured_enabled": false,
       "enabled": false,
       "no_agent": true,
       "timezone": "America/New_York",

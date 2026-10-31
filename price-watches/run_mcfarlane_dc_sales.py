@@ -6,6 +6,7 @@ from mcfarlane_wallet_aliases import alias_for_wallet
 ROOT='__HERMES_HOME__/price-watches'
 STATE=ROOT+'/mcfarlane-dc-sales.json'; ALIASES=ROOT+'/mcfarlane-wallet-aliases.json'; RATES=ROOT+'/mcfarlane-pol-usd-daily.json'
 UA='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/140.0 Safari/537.36'
+ARCHIVE_DAYS=180; RECAP_LIMIT=30; SEEN_LIMIT=2000
 now=lambda: datetime.now(timezone.utc).isoformat().replace('+00:00','Z')
 def atomic(path,obj):
     fd,tmp=tempfile.mkstemp(dir=os.path.dirname(path),prefix='.tmp-',text=True)
@@ -62,6 +63,33 @@ def attrs(meta):
         k=str(x.get('key',x.get('trait_type','')))
         if k=='Rarity': return str(x.get('value','Unknown'))
     return 'Unknown'
+def _stamp(value):
+    try:
+        parsed=datetime.fromisoformat(str(value).replace('Z','+00:00'))
+    except (TypeError,ValueError): return None
+    return parsed.replace(tzinfo=timezone.utc) if parsed.tzinfo is None else parsed.astimezone(timezone.utc)
+def _activity_id(row): return row.get('activity_id') or row.get('id') if isinstance(row,dict) else None
+def _merge_rows(existing,new_rows):
+    merged={}
+    for row in list(existing or [])+list(new_rows or []):
+        aid=_activity_id(row)
+        if aid: merged[str(aid)]=row
+    return sorted(merged.values(),key=lambda row:(str(row.get('date') or ''),str(_activity_id(row) or '')),reverse=True)
+def merge_completed_sales(state,normalized,as_of=None):
+    """Merge normalized completed sales without coupling recap retention to analytics."""
+    as_of=(as_of or datetime.now(timezone.utc)).astimezone(timezone.utc)
+    cutoff=as_of-timedelta(days=ARCHIVE_DAYS)
+    archive_source=state.get('sales_history_180d')
+    if not isinstance(archive_source,list): archive_source=state.get('recent_sales') or []
+    archive=[]
+    for row in _merge_rows(archive_source,normalized):
+        stamp=_stamp(row.get('date'))
+        if stamp is not None and cutoff <= stamp <= as_of: archive.append(row)
+    state['sales_history_180d']=archive
+    state['recent_sales']=_merge_rows(state.get('recent_sales') or [],normalized)[:RECAP_LIMIT]
+    seen=state.get('seen_activity_ids') if isinstance(state.get('seen_activity_ids'),list) else []
+    state['seen_activity_ids']=list(dict.fromkeys([*seen,*[str(_activity_id(row)) for row in normalized if _activity_id(row)]]))[-SEEN_LIMIT:]
+    return state
 def main():
     state=load(STATE); aliases=load(ALIASES); rates=load(RATES)
     key=os.environ.get('RARIBLE_API_KEY')
@@ -73,7 +101,7 @@ def main():
     except Exception as e: return fail(state,str(e))
     acts=result.get('activities')
     if not isinstance(acts,list): return fail(state,'Rarible malformed response (activities missing)')
-    # Alert dedupe must outlive the bounded display recap; the latter keeps only thirty rows.
+    # Alert dedupe must outlive the bounded display recap; the latter keeps only fifty rows.
     seen=state.get('seen_activity_ids')
     if not isinstance(seen,list):
         seen=[x.get('activity_id',x.get('id')) for x in state.get('recent_sales',[]) if x.get('activity_id',x.get('id'))]
@@ -142,9 +170,8 @@ def main():
         sold=a.get('date','').replace('T',' ')[:16]
         out.append(f"• **[{category}] {c.get('display_name') or col}** — Item: **{item_name}**; Rarity: **{rarity}**; Price: **{amount} POL ({usd_text})**; Buy: **{party(bw,bt)}**; Sell: **{party(sw,st)}**; Sold: {sold}")
         c['last_sale']=a; normalized.append(a)
-    # Keep a bounded, chronological recap history for the daily heartbeat.
-    state['recent_sales']=sorted(state.get('recent_sales',[])+normalized,key=lambda a:a.get('date',''),reverse=True)[:30]
-    state['seen_activity_ids']=list(dict.fromkeys(seen+[a['activity_id'] for a in normalized]))[-2000:]
+    # The analytics archive and delivery recap have independent retention rules.
+    merge_completed_sales(state,normalized)
     newest=max(fresh,key=lambda x:x.get('date','')); state['last_activity_search_cursor']=newest.get('cursor',state.get('last_activity_search_cursor')); state['last_successful_check_at']=now(); state['last_activity_search_status']='verified: HTTP 200 parsed; '+str(len(normalized))+' qualifying new sales'; state['last_activity_search_attempt_at']=state['last_successful_check_at']; state.pop('last_activity_search_failed_at',None); state.pop('http400_retry',None)
     state['pending_whatsapp_sale_alert']={'activity_ids':[a['activity_id'] for a in normalized],'alert_text':'\r\n'.join(out),'delivered':False,'created_at':now()}
     atomic(STATE,state); print('\r\n'.join(out))

@@ -86,6 +86,6 @@ Required engineering work before claiming resilient coverage:
 6. Repair the scheduled backup environment and verify a remote commit separately.
 
 <!-- automated-drift:start -->
-**Observed implementation fingerprint:** `bf1b6f22a0322ac2267e0a7eccb5cd6a7369968736c3a5b7a5df2b9ecd8b8e8d`
+**Observed implementation fingerprint:** `4905c0cba7cdc150fe3c482ecf4a4dd5fc3ba230f8cc8e0c3c24d9a229d9acc7`
 **Automated drift status:** changed or unreviewed; substantive review required. Hash comparison is not a requirements review.
 <!-- automated-drift:end -->
