@@ -1,11 +1,11 @@
 {
   "kind": "sales",
   "files": {
-    "McFarlane_DC_Sales_Alerts_PRD.docx": "5df67bf624ba9ef32cabcd7c453886461931bbd98a20b1286f04ac70360aaf8a",
-    "McFarlane_DC_Sales_Alerts_PRD.md": "48386041dfba5c6c2b77caa5ce170431d25f80f786be6cdf65459fcc716f6ca6",
+    "McFarlane_DC_Sales_Alerts_PRD.docx": "18697e2ac677ebdb14a64e6a87828ae3496308392f1567adc76cfdbfa8a23c00",
+    "McFarlane_DC_Sales_Alerts_PRD.md": "b9f9841333a1771ead630d073ec9588c1d4f536977437ab0a7c0d488679ce942",
     "RESTORE.md": "ef8726768470b1038a5d1e464377f59b29c258f0ee7b27f003d93d2a31cb90d1",
     "price-watches/mcfarlane_wallet_aliases.py": "61e4c22bb18eb2d94272a5ae5d6a07d9e639be326b5c45714465b991d3273062",
-    "price-watches/run_mcfarlane_dc_sales.py": "5e511b9b9ae3442e8d73fb7cd58cb069d1d24c38d1a6ae3855ae068a804d27d1",
+    "price-watches/run_mcfarlane_dc_sales.py": "9fb565dfe0cb3171abef8d5ed38b0ebb904a6a87c2547c1a6ad2aa48ab689bc4",
     "restore-config.json": "383a26e7c261864d8eb3aebb35de6585e50f8f0c3b00b0da5c71becb65943583",
     "scripts/audit_mtd_wallet_aliases.py": "928ccfe09967886196c115e0357e849853210dfde6cc06f44c160265426e6971",
     "scripts/backup-mtd-sales-alerts.py": "f59bd78027132c1c4272d063bfa90de7860b3bbb71099310e94c95cdf2569254",

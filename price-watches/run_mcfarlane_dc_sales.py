@@ -78,15 +78,8 @@ def _merge_rows(existing,new_rows):
 def merge_completed_sales(state,normalized,as_of=None):
     """Merge normalized completed sales without coupling recap retention to analytics."""
     as_of=(as_of or datetime.now(timezone.utc)).astimezone(timezone.utc)
-    cutoff=as_of-timedelta(days=ARCHIVE_DAYS)
-    archive_source=state.get('sales_history_180d')
-    if not isinstance(archive_source,list): archive_source=state.get('recent_sales') or []
-    archive=[]
-    for row in _merge_rows(archive_source,normalized):
-        stamp=_stamp(row.get('date'))
-        if stamp is not None and cutoff <= stamp <= as_of: archive.append(row)
-    state['sales_history_180d']=archive
-    state['recent_sales']=_merge_rows(state.get('recent_sales') or [],normalized)[:RECAP_LIMIT]
+    from mtd_sales_history import retain_completed_sales
+    retain_completed_sales(state,normalized,as_of=as_of)
     seen=state.get('seen_activity_ids') if isinstance(state.get('seen_activity_ids'),list) else []
     state['seen_activity_ids']=list(dict.fromkeys([*seen,*[str(_activity_id(row)) for row in normalized if _activity_id(row)]]))[-SEEN_LIMIT:]
     return state
