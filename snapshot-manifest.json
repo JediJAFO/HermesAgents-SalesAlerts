@@ -1,17 +1,18 @@
 {
   "kind": "sales",
   "files": {
-    "McFarlane_DC_Sales_Alerts_PRD.docx": "18697e2ac677ebdb14a64e6a87828ae3496308392f1567adc76cfdbfa8a23c00",
-    "McFarlane_DC_Sales_Alerts_PRD.md": "b9f9841333a1771ead630d073ec9588c1d4f536977437ab0a7c0d488679ce942",
+    "McFarlane_DC_Sales_Alerts_PRD.docx": "ea913725dff73efe7e110226320d006f10f641538ea6237773d662884d49ded3",
+    "McFarlane_DC_Sales_Alerts_PRD.md": "f274875556979c55a766abbdb0e8e69ac10a6d1a7611cc21fc434e38761e34b6",
     "RESTORE.md": "ef8726768470b1038a5d1e464377f59b29c258f0ee7b27f003d93d2a31cb90d1",
     "price-watches/mcfarlane_wallet_aliases.py": "61e4c22bb18eb2d94272a5ae5d6a07d9e639be326b5c45714465b991d3273062",
+    "price-watches/mtd_sales_history.py": "768ac81111cef3ec9670af3ee6eef9187ccda93c70d419807a974db197a7cb38",
     "price-watches/run_mcfarlane_dc_sales.py": "9fb565dfe0cb3171abef8d5ed38b0ebb904a6a87c2547c1a6ad2aa48ab689bc4",
     "restore-config.json": "383a26e7c261864d8eb3aebb35de6585e50f8f0c3b00b0da5c71becb65943583",
     "scripts/audit_mtd_wallet_aliases.py": "928ccfe09967886196c115e0357e849853210dfde6cc06f44c160265426e6971",
     "scripts/backup-mtd-sales-alerts.py": "f59bd78027132c1c4272d063bfa90de7860b3bbb71099310e94c95cdf2569254",
     "scripts/enrich_mtd_dc_metadata.py": "e78d17ecba68feaed4795931893f5658497cd104422a87a3c475cca28b00fc3d",
-    "scripts/monitor_backup.py": "6451ab75bca153802864a70a5348bbc20c7ecd1368e2d0f07b7a799873d2cc2b",
-    "scripts/monitor_backup_manifest.json": "1d0a18638e5c5bf6b603844b44f71b88960a9332b77dd8c69076ca8cf9cdebe4",
+    "scripts/monitor_backup.py": "96741bbd1ec774451fad8ab3f9cecd7f7153c1901a292fec1adf475c8624a1c8",
+    "scripts/monitor_backup_manifest.json": "82e333bf7d9d1ded31f220f47a30654d1f801aaca8f93f8e78ca84d3808548fd",
     "scripts/refresh-mcfarlane-prds.py": "0ca2f6e7f603a59247b77f1c361725b8737a9099032bf1fc4f7ddb71528c8033",
     "scripts/report_mtd_wallet_alias_audit.py": "ec77fcf00eb8dcd05ee5ffed175232c58e373b01766fa5290ada0c061537fb04",
     "scripts/retry_mtd_http400.py": "19626298de4f8348842e877daa1898f4dea22486ec4a1f118a77a040605f4575",
@@ -19,7 +20,7 @@
     "scripts/send_mtd_8am_last_five_heartbeat.py": "c0a47daba048f691e90ffd58d944aae7ae864598a73230b8801179feafe07a2c",
     "scripts/send_mtd_whatsapp_sales_only.py": "de0a2b3facaef654736799d57df4c7787d85ee337fcef08b05b7582fbe5cbc37",
     "scripts/test_audit_mtd_wallet_aliases.py": "711713b4b7cd585fbf2571f114f90caaa4ee881e8b8a399511e135bb3af57fd8",
-    "scripts/test_monitor_backup.py": "4af43bca02e24305468fd7b40d7206a8f4a14630a2a8c447f1740fb40a0861c3",
+    "scripts/test_monitor_backup.py": "5cbd2e308feff280d5b5b7604f202e5d59dee1da0bd319ffc0d52750dcd53dc2",
     "scripts/test_report_mtd_wallet_alias_audit.py": "c75513a63419ac97afb380bc49d7d100f94236b3929307d824dbdca28d267bbc"
   }
 }
