@@ -86,6 +86,26 @@ Required engineering work before claiming resilient coverage:
 6. Repair the scheduled backup environment and verify a remote commit separately.
 
 <!-- automated-drift:start -->
-**Observed implementation fingerprint:** `94af4c75cd23c7f4f21054f2878466469096b4c5e21adc12d678d1cebbc15497`
+**Observed implementation fingerprint:** `8984fadcad00526d68c34903d08caf09d750d3e01bcdf8096ddc1c0f12f07795`
 **Automated drift status:** changed or unreviewed; substantive review required. Hash comparison is not a requirements review.
 <!-- automated-drift:end -->
+
+## Source-only reconciliation — November 5, 2026
+
+Completed-sale history/analytics and listing-wallet/detail/refresh sources are explicit. Basic Analytics supply and metadata rarity are separate provider-indexed derived datasets, not completed-sale evidence or verified lifetime blockchain supply.
+
+The earlier dated review above is historical; its saved counts, schedules, test totals and blanket backup-gap statements are not current acceptance claims. This addendum verifies current source membership and schedule projection only, not every historical behavioral statement. The comprehensive explicit manifest now covers this family. Private runtime state and captured provider data remain excluded. Read RESTORE.md for observed pinned dependencies, offline isolation and disabled-job restoration. No new DOCX, live provider request, notification, migration or backup publication was performed during reconciliation. Detailed behavioral re-review and a clean-host rebuild remain separate gates.
+
+### Current family source coverage
+
+- `scripts/run_mtd_sales_monitor.py`
+- `scripts/retry_mtd_http400.py`
+- `scripts/enrich_mtd_dc_metadata.py`
+- `scripts/send_mtd_8am_last_five_heartbeat.py`
+- `scripts/send_mtd_whatsapp_sales_only.py`
+- `price-watches/run_mcfarlane_dc_sales.py`
+- `price-watches/mtd_sales_history.py`
+- `price-watches/mtd_sales_analytics.py`
+- `scripts/mtd_sales_analytics_portal.py`
+- `scripts/launch_mtd_listing_wallets.py`
+- `scripts/mtd_listing_wallets.py`
